@@ -1,9 +1,9 @@
+local gui =loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/GUI-Framework-Roblox/refs/heads/main/script.lua"))()()
 local macro = {}
 local recording = false
 local playing = false
 local playIndex = 1
 local AllowPlay = true
-
 local ui = Instance.new("ScreenGui",game.Players.LocalPlayer.PlayerGui)
 local box = Instance.new("TextBox",ui)
 box.Position = UDim2.new(0.374,0,0.887,0)
@@ -51,20 +51,20 @@ local function SetPlaying(bool)
 		Humanoid.WalkSpeed = 16
 	end
 end
-local function SetBoxText()
-	MacroText = "{"
-	for i,v in pairs(macro) do
-		task.wait()
-		if i < #macro then
-			MacroText = MacroText.."{CFrame.new("..tostring(v[1]).."), CFrame.new("..tostring(v[2]).."), "..tostring(v[3])..", "..tostring(v[4]).."},"
-		else
-			MacroText = MacroText.."{CFrame.new("..tostring(v[1]).."), CFrame.new("..tostring(v[2]).."), "..tostring(v[3])..", "..tostring(v[4]).."}"
-		end
-		print(i)
-	end
-	MacroText = MacroText.."}"
-	writefile("macro.txt", MacroText)
-	--box.Text = MacroText
+
+local function SetBoxText() 
+	MacroText = "return {" 
+	for i,v in pairs(macro) do 
+		task.wait() 
+		if i < #macro then 
+			MacroText = MacroText.."{CFrame.new("..tostring(v[1]).."), CFrame.new("..tostring(v[2]).."), "..tostring(v[3])..", "..tostring(v[4]).."}," 
+		else 
+			MacroText = MacroText.."{CFrame.new("..tostring(v[1]).."), CFrame.new("..tostring(v[2]).."), "..tostring(v[3])..", "..tostring(v[4]).."}" 
+		end 
+		print(i.." frames loaded") 
+	end 
+	MacroText = MacroText.."}" 
+	writefile("macro.lua", MacroText) --box.Text = MacroText end
 end
 local isRunAnimating = false
 local runAnim = Humanoid.Animator:LoadAnimation(Animate.run.RunAnim)
@@ -76,8 +76,8 @@ game:GetService("RunService").PreRender:Connect(function()
 	if playing and macro[playIndex] then
 		game.Workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
 		--HumanoidRootPart.AssemblyLinearVelocity = macro[playIndex][5]
-		Humanoid:MoveTo((macro[playIndex][1].Position-HumanoidRootPart.Position).Unit)
-		HumanoidRootPart.CFrame = macro[playIndex][1]
+		--Humanoid:MoveTo((macro[playIndex][1].Position-HumanoidRootPart.Position).Unit,false)
+		HumanoidRootPart:PivotTo(  macro[playIndex][1])
 		Humanoid:ChangeState(macro[playIndex][3])
 		game.Workspace.CurrentCamera.CFrame = macro[playIndex][2]
 		game:GetService("UserInputService").MouseBehavior = (macro[playIndex][4])
@@ -160,3 +160,10 @@ game.UserInputService.InputBegan:Connect(function(key)
 		SetBoxText()
 	end
 end)
+local main = gui:CreateTab("Ring 0",1)
+gui:SetTitle("EToH Macros")
+gui:CreateButton(main, "trigger", "Tower of Genesis", "Auto-wins ToG. Make sure you have entered the tower.",1,function()
+	macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToG.lua"))()
+	SetPlaying(true)
+end)
+gui:FinishLoading()
