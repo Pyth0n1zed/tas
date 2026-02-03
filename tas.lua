@@ -136,18 +136,25 @@ game:GetService("RunService").PreRender:Connect(function()
 		HumanoidRootPart.Anchored = true
 	end
 end)
+game.UserInputService.InputEnded:Connect(function(key)
+	if key.KeyCode == Enum.KeyCode.Z then
+		zHold = false
+	end
+end)
 game.UserInputService.InputBegan:Connect(function(key)
 	if key.KeyCode == Enum.KeyCode.V then
 		macro = {}
 		SetPlaying(false)
 		SetRecording(false)
 	elseif key.KeyCode == Enum.KeyCode.B then
-		SetRecording(false)
+		SetRecording(true)
+		recording = false
 		workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
 		AllowPlay = false
-		if macro[playIndex] then  
-			HumanoidRootPart:PivotTo(macro[playIndex][1])
-			workspace.CurrentCamera.CFrame = macro[playIndex][2]
+		if macro[#macro] then  
+			HumanoidRootPart:PivotTo(macro[#macro][1])
+			workspace.CurrentCamera.CFrame = macro[#macro][2]
+			playIndex = #macro
 		end
 	elseif key.KeyCode == Enum.KeyCode.C then
 		recording = not AllowPlay
@@ -160,18 +167,7 @@ game.UserInputService.InputBegan:Connect(function(key)
 	elseif key.KeyCode == Enum.KeyCode.L then
 		SetPlaying(false)
 	elseif key.KeyCode == Enum.KeyCode.Z then
-		recording = false
-		AllowPlay = false
-		playIndex = playIndex - 2
-
-		if playIndex > 0 then
-			HumanoidRootPart.CFrame = macro[playIndex][1]
-			Humanoid:ChangeState(macro[playIndex][3])
-			game.Workspace.CurrentCamera.CFrame = macro[playIndex][2]
-			game:GetService("UserInputService").MouseBehavior = (macro[playIndex][4])
-			macro[playIndex+1] = nil
-			macro[playIndex+2] = nil
-		end
+		zHold = true
 	elseif key.KeyCode == Enum.KeyCode.X then
 		recording = false
 		AllowPlay = false
@@ -184,6 +180,24 @@ game.UserInputService.InputBegan:Connect(function(key)
 		AllowPlay = false
 	elseif key.KeyCode == Enum.KeyCode.K then
 		SetBoxText()
+	end
+end)
+task.spawn(function()
+	while task.wait() do
+		if zHold then
+			recording = false
+		AllowPlay = false
+		playIndex = playIndex - 1
+
+		if playIndex > 0 then
+			HumanoidRootPart.CFrame = macro[playIndex][1]
+			Humanoid:ChangeState(macro[playIndex][3])
+			game.Workspace.CurrentCamera.CFrame = macro[playIndex][2]
+			game:GetService("UserInputService").MouseBehavior = (macro[playIndex][4])
+			macro[playIndex+1] = nil
+			macro[playIndex+2] = nil
+		end
+		end
 	end
 end)
 local read = gui:CreateTab("README",1)
@@ -239,7 +253,7 @@ gui:CreateButton(main, "trigger", "Tower of Buttons", "FPS: 60-120",3,function()
 		SetPlaying(true)
 	end
 end)
-gui:CreateButton(r1, "trigger", "Tower of True Skill", "FPS: 60-120",1,function()
+gui:CreateButton(r1, "trigger", "Tower of True Skill", "FPS: 60-240",1,function()
 	gui:Notify("TASing ToTS... Please wait",5)
 	if plr.PlayerGui.Timer.Timer.Timer.inner.Digits.Text ~= "00:00.00" then
 		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToTS.lua"))()
