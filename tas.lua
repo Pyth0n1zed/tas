@@ -268,7 +268,7 @@ gui:CreateButton(r1, "trigger", "Tower of True Skill", "FPS: 60-240",5,function(
 		SetPlaying(true)
 	end
 end)
-gui:CreateButton(r1, "trigger", "Tower of A Simple Time", "FPS: 60-120",1,function()
+gui:CreateButton(r1, "trigger", "Tower of A Simple Time", "FPS: 60",1,function()
 	gui:Notify("TASing ToTS... Please wait",5)
 	if plr.PlayerGui.Timer.Timer.Timer.inner.Digits.Text ~= "00:00.00" then
 		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToAST.lua"))()
