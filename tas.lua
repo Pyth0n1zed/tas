@@ -52,20 +52,37 @@ local function SetPlaying(bool)
 		Humanoid.WalkSpeed = 16
 	end
 end
-
-local function SetBoxText() 
-	MacroText = "return {" 
-	for i,v in pairs(macro) do 
-		task.wait() 
-		if i < #macro then 
-			MacroText = MacroText.."{CFrame.new("..tostring(v[1]).."), CFrame.new("..tostring(v[2]).."), "..tostring(v[3])..", "..tostring(v[4]).."}," 
-		else 
-			MacroText = MacroText.."{CFrame.new("..tostring(v[1]).."), CFrame.new("..tostring(v[2]).."), "..tostring(v[3])..", "..tostring(v[4]).."}" 
-		end 
-		print(i.." frames loaded") 
-	end 
-	MacroText = MacroText.."}" 
-	writefile("macro.lua", MacroText) --box.Text = MacroText end
+local function round2(n)
+	return math.floor(n * 100 + 0.5) / 100
+end
+local function cframeToRoundedString(cf)
+	local x, y, z,
+		r00, r01, r02,
+		r10, r11, r12,
+		r20, r21, r22 = cf:GetComponents()
+	return string.format(
+		"CFrame.new(%.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f)",
+		round2(x), round2(y), round2(z),
+		round2(r00), round2(r01), round2(r02),
+		round2(r10), round2(r11), round2(r12),
+		round2(r20), round2(r21), round2(r22)
+	)
+end
+local function SetBoxText()
+	MacroText = "return {"
+	for i, v in ipairs(macro) do
+		task.wait()
+		local rootCF = cframeToRoundedString(v[1])
+		local camCF  = cframeToRoundedString(v[2])
+		if i < #macro then
+			MacroText ..= "{" ..rootCF .. ", " ..camCF .. ", " ..tostring(v[3]) .. ", " ..tostring(v[4]) .."},"
+		else
+			MacroText ..= "{" ..rootCF .. ", " ..camCF .. ", " ..tostring(v[3]) .. ", " ..tostring(v[4]) .."}"
+		end
+		print(i .. " frames processed")
+	end
+	MacroText ..= "}"
+	writefile("macro.lua", MacroText)
 end
 local isRunAnimating = false
 local runAnim = Humanoid.Animator:LoadAnimation(Animate.run.RunAnim)
@@ -137,6 +154,7 @@ game.UserInputService.InputBegan:Connect(function(key)
 		AllowPlay = not AllowPlay
 	elseif key.KeyCode == Enum.KeyCode.N then
 		SetRecording(false)
+		SetBoxText()
 	elseif key.KeyCode == Enum.KeyCode.M then
 		SetPlaying(true)
 	elseif key.KeyCode == Enum.KeyCode.L then
@@ -144,7 +162,7 @@ game.UserInputService.InputBegan:Connect(function(key)
 	elseif key.KeyCode == Enum.KeyCode.Z then
 		recording = false
 		AllowPlay = false
-		playIndex = playIndex - 1
+		playIndex = playIndex - 2
 
 		if playIndex > 0 then
 			HumanoidRootPart.CFrame = macro[playIndex][1]
@@ -152,6 +170,7 @@ game.UserInputService.InputBegan:Connect(function(key)
 			game.Workspace.CurrentCamera.CFrame = macro[playIndex][2]
 			game:GetService("UserInputService").MouseBehavior = (macro[playIndex][4])
 			macro[playIndex+1] = nil
+			macro[playIndex+2] = nil
 		end
 	elseif key.KeyCode == Enum.KeyCode.X then
 		recording = false
@@ -173,6 +192,7 @@ gui:CreateLabel(read,"Before running the macro, ensure you are in the lobby.",2)
 gui:CreateLabel(read,"Also, make sure your fps is set to a value between the reccomended ones listed in the button's description.",4)
 gui:CreateLabel(read,"You can only use a macro once per session, otherwise it breaks for some reason. To use a macro again or use a different one, rejoin.",5)
 local main = gui:CreateTab("Ring 0",2)
+local r1 = gui:CreateTab("Ring 1", 3)
 gui:SetTitle("EToH Macros")
 gui:CreateButton(main, "trigger", "Tower of Genesis", "FPS: 60-120",1,function()
 	gui:Notify("TASing ToG... Please wait",5)
@@ -201,6 +221,36 @@ gui:CreateButton(main, "trigger", "Tower of Motion Evolution", "FPS: 60-120",2,f
 			if plr.PlayerGui.towerLoading.Enabled == false then break end
 		end
 		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToME.lua"))()
+		SetPlaying(true)
+	end
+end)
+gui:CreateButton(main, "trigger", "Tower of Buttons", "FPS: 60-120",3,function()
+	gui:Notify("TASing ToB... Please wait",5)
+	if plr.PlayerGui.Timer.Timer.Timer.inner.Digits.Text ~= "00:00.00" then
+		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToB.lua"))()
+		SetPlaying(true)
+	else
+		HumanoidRootPart:PivotTo(game.Workspace.Towers.ToB.Teleporter.Teleporter.TPFRAME.CFrame)
+		task.wait(1)
+		while task.wait((0.5)) do
+			if plr.PlayerGui.towerLoading.Enabled == false then break end
+		end
+		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToB.lua"))()
+		SetPlaying(true)
+	end
+end)
+gui:CreateButton(r1, "trigger", "Tower of True Skill", "FPS: 60-120",1,function()
+	gui:Notify("TASing ToTS... Please wait",5)
+	if plr.PlayerGui.Timer.Timer.Timer.inner.Digits.Text ~= "00:00.00" then
+		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToTS.lua"))()
+		SetPlaying(true)
+	else
+		HumanoidRootPart:PivotTo(game.Workspace.Towers.ToTS.Teleporter.Teleporter.TPFRAME.CFrame)
+		task.wait(1)
+		while task.wait((0.5)) do
+			if plr.PlayerGui.towerLoading.Enabled == false then break end
+		end
+		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToTS.lua"))()
 		SetPlaying(true)
 	end
 end)
