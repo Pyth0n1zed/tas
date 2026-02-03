@@ -195,7 +195,7 @@ gui:CreateButton(main, "trigger", "Tower of Motion Evolution", "FPS: 60-120",2,f
 		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToME.lua"))()
 		SetPlaying(true)
 	else
-		HumanoidRootPart:PivotTo(game.Workspace.Towers.ToG.Teleporter.Teleporter.TPFRAME.CFrame)
+		HumanoidRootPart:PivotTo(game.Workspace.Towers.ToME.Teleporter.Teleporter.TPFRAME.CFrame)
 		task.wait(1)
 		while task.wait((0.5)) do
 			if plr.PlayerGui.towerLoading.Enabled == false then break end
