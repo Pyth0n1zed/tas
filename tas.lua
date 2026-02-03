@@ -1,5 +1,6 @@
 local gui =loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/GUI-Framework-Roblox/refs/heads/main/script.lua"))()()
 local macro = {}
+local plr = game.Players.LocalPlayer
 local recording = false
 local playing = false
 local playIndex = 1
@@ -124,7 +125,13 @@ game.UserInputService.InputBegan:Connect(function(key)
 		SetPlaying(false)
 		SetRecording(false)
 	elseif key.KeyCode == Enum.KeyCode.B then
-		SetRecording(true)
+		SetRecording(false)
+		workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
+		AllowPlay = false
+		if macro[playIndex] then
+			HumanoidRootPart:PivotTo(macro[playIndex][1])
+			workspace.CurrentCamera.CFrame = macro[playIndex][2]
+		end
 	elseif key.KeyCode == Enum.KeyCode.C then
 		recording = not AllowPlay
 		AllowPlay = not AllowPlay
@@ -162,13 +169,24 @@ game.UserInputService.InputBegan:Connect(function(key)
 end)
 local read = gui:CreateTab("README",1)
 gui:CreateLabel(read,"Tutorial on how to use this properly",1)
-gui:CreateLabel(read,"Before running the macro, ensure you have fully loaded into the tower. If you aren't in one, pressing the button will TP you to the portal.")
-gui:CreateLabel(read,"Also, make sure your fps is set to a value between the reccomended ones listed in the button's description.")
-gui:CreateLabel(read,"You can only use a macro once per session, otherwise it breaks for some reason. To use a macro again or use a different one, rejoin.")
+gui:CreateLabel(read,"Before running the macro, ensure you are in the lobby.",2)
+gui:CreateLabel(read,"Also, make sure your fps is set to a value between the reccomended ones listed in the button's description.",4)
+gui:CreateLabel(read,"You can only use a macro once per session, otherwise it breaks for some reason. To use a macro again or use a different one, rejoin.",5)
 local main = gui:CreateTab("Ring 0",2)
 gui:SetTitle("EToH Macros")
 gui:CreateButton(main, "trigger", "Tower of Genesis", "FPS: 60-120",1,function()
-	macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToG.lua"))()
-	SetPlaying(true)
+	gui:Notify("TASing ToG... Please wait",5)
+	if plr.PlayerGui.Timer.Timer.Timer.inner.Digits.Text ~= "00:00.00" then
+		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToG.lua"))()
+		SetPlaying(true)
+	else
+		HumanoidRootPart:PivotTo(game.Workspace.Towers.ToG.Teleporter.Teleporter.TPFRAME.CFrame)
+		task.wait(1)
+		while task.wait((0.5)) do
+			if plr.PlayerGui.towerLoading.Enabled == false then break end
+		end
+		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToG.lua"))()
+		SetPlaying(true)
+	end
 end)
 gui:FinishLoading()
