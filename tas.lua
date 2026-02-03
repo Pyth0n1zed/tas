@@ -128,7 +128,7 @@ game.UserInputService.InputBegan:Connect(function(key)
 		SetRecording(false)
 		workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
 		AllowPlay = false
-		if macro[playIndex] then
+		if macro[playIndex] then  
 			HumanoidRootPart:PivotTo(macro[playIndex][1])
 			workspace.CurrentCamera.CFrame = macro[playIndex][2]
 		end
@@ -186,6 +186,21 @@ gui:CreateButton(main, "trigger", "Tower of Genesis", "FPS: 60-120",1,function()
 			if plr.PlayerGui.towerLoading.Enabled == false then break end
 		end
 		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToG.lua"))()
+		SetPlaying(true)
+	end
+end)
+gui:CreateButton(main, "trigger", "Tower of Motion Evolution", "FPS: 60-120",2,function()
+	gui:Notify("TASing ToME... Please wait",5)
+	if plr.PlayerGui.Timer.Timer.Timer.inner.Digits.Text ~= "00:00.00" then
+		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToME.lua"))()
+		SetPlaying(true)
+	else
+		HumanoidRootPart:PivotTo(game.Workspace.Towers.ToG.Teleporter.Teleporter.TPFRAME.CFrame)
+		task.wait(1)
+		while task.wait((0.5)) do
+			if plr.PlayerGui.towerLoading.Enabled == false then break end
+		end
+		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToME.lua"))()
 		SetPlaying(true)
 	end
 end)
