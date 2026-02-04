@@ -207,7 +207,8 @@ gui:CreateLabel(read,"Also, make sure your fps is set to a value between the rec
 gui:CreateLabel(read,"You can only use a macro once per session, otherwise it breaks for some reason. To use a macro again or use a different one, rejoin.",5)
 local main = gui:CreateTab("Ring 0",2)
 local r1 = gui:CreateTab("Ring 1", 3)
-local r2 = gui:CreateTab("Ring 2", 4)
+local r2 = gui:CreateTab("Ring 2", 5)
+local z1 = gui:CreateTab("Zone 1", 4)
 gui:SetTitle("EToH Macros")
 gui:CreateButton(main, "trigger", "Tower of Genesis", "FPS: 60-120",1,function()
 	gui:Notify("TASing ToG... Please wait",5)
@@ -311,6 +312,21 @@ gui:CreateButton(r1, "trigger", "Tower of Hecc", "FPS: 60-120",2,function()
 			if plr.PlayerGui.towerLoading.Enabled == false then break end
 		end
 		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToH.lua"))()
+		SetPlaying(true)
+	end
+end)
+gui:CreateButton(z1, "trigger", "Tower of Peaceful Happiness and Tranquility", "FPS: 60-120",2,function()
+	gui:Notify("TASing ToPHaT... Please wait",5)
+	if plr.PlayerGui.Timer.Timer.Timer.inner.Digits.Text ~= "00:00.00" then
+		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToPHaT.lua"))()
+		SetPlaying(true)
+	else
+		HumanoidRootPart:PivotTo(game.Workspace.Towers.ToPHaT.Teleporter.Teleporter.TPFRAME.CFrame)
+		task.wait(1)
+		while task.wait((0.5)) do
+			if plr.PlayerGui.towerLoading.Enabled == false then break end
+		end
+		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToPHaT.lua"))()
 		SetPlaying(true)
 	end
 end)
