@@ -17,6 +17,7 @@ box.TextScaled = false
 box.MultiLine = true
 box.TextEditable = false
 box.ClearTextOnFocus = false
+
 local MacroText = ""
 Animate = game.Players.LocalPlayer.Character.Animate
 Humanoid = game.Players.LocalPlayer.Character.Humanoid
@@ -207,6 +208,7 @@ gui:CreateLabel(read,"Also, make sure your fps is set to a value between the rec
 gui:CreateLabel(read,"You can only use a macro once per session, otherwise it breaks for some reason. To use a macro again or use a different one, rejoin.",5)
 local main = gui:CreateTab("Ring 0",2)
 local r1 = gui:CreateTab("Ring 1", 3)
+local r2 = gui:CreateTab("Ring 2", 4)
 gui:SetTitle("EToH Macros")
 gui:CreateButton(main, "trigger", "Tower of Genesis", "FPS: 60-120",1,function()
 	gui:Notify("TASing ToG... Please wait",5)
@@ -253,7 +255,7 @@ gui:CreateButton(main, "trigger", "Tower of Buttons", "FPS: 60-120",3,function()
 		SetPlaying(true)
 	end
 end)
-gui:CreateButton(r1, "trigger", "Tower of True Skill", "FPS: 60-240",5,function()
+gui:CreateButton(r1, "trigger", "Tower of True Skill", "FPS: 60-~1000",5,function()
 	gui:Notify("TASing ToTS... Please wait",5)
 	if plr.PlayerGui.Timer.Timer.Timer.inner.Digits.Text ~= "00:00.00" then
 		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToTS.lua"))()
@@ -269,7 +271,7 @@ gui:CreateButton(r1, "trigger", "Tower of True Skill", "FPS: 60-240",5,function(
 	end
 end)
 gui:CreateButton(r1, "trigger", "Tower of A Simple Time", "FPS: 60",1,function()
-	gui:Notify("TASing ToTS... Please wait",5)
+	gui:Notify("TASing ToAST... Please wait",5)
 	if plr.PlayerGui.Timer.Timer.Timer.inner.Digits.Text ~= "00:00.00" then
 		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToAST.lua"))()
 		SetPlaying(true)
@@ -280,6 +282,21 @@ gui:CreateButton(r1, "trigger", "Tower of A Simple Time", "FPS: 60",1,function()
 			if plr.PlayerGui.towerLoading.Enabled == false then break end
 		end
 		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToAST.lua"))()
+		SetPlaying(true)
+	end
+end)
+gui:CreateButton(r2, "trigger", "Tower of Difficulty Chart", "FPS: 60-120",2,function()
+	gui:Notify("TASing ToDC... Please wait",5)
+	if plr.PlayerGui.Timer.Timer.Timer.inner.Digits.Text ~= "00:00.00" then
+		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToDC.lua"))()
+		SetPlaying(true)
+	else
+		HumanoidRootPart:PivotTo(game.Workspace.Towers.ToDC.Teleporter.Teleporter.TPFRAME.CFrame)
+		task.wait(1)
+		while task.wait((0.5)) do
+			if plr.PlayerGui.towerLoading.Enabled == false then break end
+		end
+		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/ToDC.lua"))()
 		SetPlaying(true)
 	end
 end)
