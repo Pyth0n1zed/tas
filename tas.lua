@@ -52,22 +52,7 @@ local function SetPlaying(bool)
 		Humanoid.WalkSpeed = 16
 	end
 end
-local function round2(n)
-	return math.floor(n * 100 + 0.5) / 100
-end
-local function cframeToRoundedString(cf)
-	local x, y, z,
-		r00, r01, r02,
-		r10, r11, r12,
-		r20, r21, r22 = cf:GetComponents()
-	return string.format(
-		"CFrame.new(%.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f)",
-		round2(x), round2(y), round2(z),
-		round2(r00), round2(r01), round2(r02),
-		round2(r10), round2(r11), round2(r12),
-		round2(r20), round2(r21), round2(r22)
-	)
-end
+
 local function SetBoxText()
 	MacroText = "return {"
 	for i, v in ipairs(macro) do
@@ -182,24 +167,7 @@ game.UserInputService.InputBegan:Connect(function(key)
 		SetBoxText()
 	end
 end)]]
-task.spawn(function()
-	while task.wait() do
-		if zHold then
-			recording = false
-		AllowPlay = false
-		playIndex = playIndex - 1
-		if not macro[playIndex] then continue end
-		if playIndex > 0 then
-			HumanoidRootPart.CFrame = macro[playIndex][1]
-			Humanoid:ChangeState(macro[playIndex][3])
-			game.Workspace.CurrentCamera.CFrame = macro[playIndex][2]
-			game:GetService("UserInputService").MouseBehavior = (macro[playIndex][4])
-			macro[playIndex+1] = nil
-			macro[playIndex+2] = nil
-		end
-		end
-	end
-end)
+
 function MacroTower(ac,minTime)
 	gui:Notify("TASing "..ac.."... Please wait",5)
 	if plr.PlayerGui.Timer.Timer.Timer.inner.Digits.Text ~= "00:00.00" then
@@ -215,10 +183,27 @@ function MacroTower(ac,minTime)
 	end
 	print(table.unpack(macro))
 	local totalTime = 0
-	for i,v in ipairs(workspace.Towers[ac]:GetDescendants()) do
-		if v:IsA("Part") and not v:FindFirstChild("Kills") and v.Name~="WinPad" then
-		v.Name = tostring(i)
+	for _, v in ipairs(workspace.Towers[plr.PlayerGui.Timer.Timer.Acronym.Text]:GetDescendants()) do
+		if v:IsA("Part") and not v:FindFirstChild("Kills") and v.Name ~= "WinPad" then
+			local inserted = false
+			if not sorted[1] then
+				table.insert(sorted, v)
+			else
+				for ii, vv in ipairs(sorted) do
+					if v.Position.Y < vv.Position.Y then
+						table.insert(sorted, ii, v)
+						inserted = true
+						break
+					end
+				end
+				if not inserted then
+					table.insert(sorted, v)
+				end
+			end
 		end
+	end
+	for i,v in pairs(sorted) do
+		v.Name = tostring(i)
 	end
 	local totalTime = 0
 	for i, partName in ipairs(macro) do
@@ -257,22 +242,39 @@ local r2 = gui:CreateTab("Ring 2", 5)
 local z1 = gui:CreateTab("Zone 1", 4)
 gui:CreateButton(dev, "trigger", "Toggle Macro Rec", "",1,function()recording = not recording end)
 gui:CreateButton(dev, "trigger", "Save macro", "",2,function()SetBoxText() end)
+local sorted = {}
 gui:CreateButton(dev, "trigger", "Name parts", "",3,function()
-for i,v in pairs(workspace.Towers[plr.PlayerGui.Timer.Timer.Acronym.Text]:GetDescendants()) do
-	if v:IsA("Part") and not v:FindFirstChild("Kills") and v.Name~="WinPad" then
-		v.Name = tostring(i)
+for _, v in ipairs(workspace.Towers[plr.PlayerGui.Timer.Timer.Acronym.Text]:GetDescendants()) do
+	if v:IsA("Part") and not v:FindFirstChild("Kills") and v.Name ~= "WinPad" then
+		local inserted = false
+		if not sorted[1] then
+			table.insert(sorted, v)
+		else
+			for ii, vv in ipairs(sorted) do
+				if v.Position.Y < vv.Position.Y then
+					table.insert(sorted, ii, v)
+					inserted = true
+					break
+				end
+			end
+			if not inserted then
+				table.insert(sorted, v)
+			end
+		end
 		v.Touched:Connect(function(hit)
-			if not hit.Parent == plr.Character or hit.Parent.Parent == plr.Character then return end
-    		if not recording then return end
-    		if touchedOnce[v.Name] then return end
-
-    		touchedOnce[v.Name] = true
-    		table.insert(macro, v.Name)
-    		print(v.Name)
+			if hit.Parent ~= plr.Character and hit.Parent.Parent ~= plr.Character then return end
+			if not recording then return end
+			if touchedOnce[v] then return end
+			touchedOnce[v] = true
+			table.insert(macro, v.Name)
+			print(v.Name)
 		end)
 	end
-	
 end
+for i,v in pairs(sorted) do
+	v.Name = tostring(i)
+end
+
 end)
 gui:CreateButton(dev, "trigger", "Clear macro", "",4,function()macro = {}end)
 gui:CreateButton(r1,"trigger","Tower of True Skill","",15,function()MacroTower("ToTS",17)end)
