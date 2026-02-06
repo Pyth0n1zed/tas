@@ -167,7 +167,7 @@ game.UserInputService.InputBegan:Connect(function(key)
 		SetBoxText()
 	end
 end)]]
-
+local sorted = {}
 function MacroTower(ac,minTime)
 	gui:Notify("TASing "..ac.."... Please wait",5)
 	if plr.PlayerGui.Timer.Timer.Timer.inner.Digits.Text ~= "00:00.00" then
@@ -181,6 +181,7 @@ function MacroTower(ac,minTime)
 		macro = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pyth0n1zed/tas/main/"..ac..".lua"))()
 		
 	end
+	task.wait(0.5)
 	print(table.unpack(macro))
 	local totalTime = 0
 	for _, v in ipairs(workspace.Towers[plr.PlayerGui.Timer.Timer.Acronym.Text]:GetDescendants()) do
@@ -202,32 +203,70 @@ function MacroTower(ac,minTime)
 			end
 		end
 	end
+	for _, v in ipairs(workspace.ClientParts:GetDescendants()) do
+		if v:IsA("Part") and not v:FindFirstChild("kills") and v.Name ~= "WinPad" then
+			local inserted = false
+			if not sorted[1] then
+				table.insert(sorted, v)
+			else
+				for ii, vv in ipairs(sorted) do
+					if v.Position.Y < vv.Position.Y then
+						table.insert(sorted, ii, v)
+						inserted = true
+						break
+					end
+				end
+				if not inserted then
+					table.insert(sorted, v)
+				end
+			end
+		elseif v:FindFirstChild("kills") then
+			task.spawn(function()
+				while task.wait() do
+					v:Destroy()
+				end 
+			end)
+		end
+	end
 	for i,v in pairs(sorted) do
 		v.Name = tostring(i)
 	end
 	local totalTime = 0
 	for i, partName in ipairs(macro) do
-    	local target = workspace.Towers[ac]:FindFirstChild(partName, true) -- true searches recursively
-    	if target and target:IsA("BasePart") then
+    	local target = workspace.Towers[ac]:FindFirstChild(partName, true) 
+    	if target and (target:IsA("Part") or v:IsA("Truss")) then
+       		Humanoid:MoveTo(target.Position)
+        	HumanoidRootPart:PivotTo(target.CFrame)
+        	print("Teleported to:", target.Name)
+    	else
+        	local target = workspace.ClientParts:FindFirstChild(partName, true) 
+    	if target and (target:IsA("Part") or v:IsA("Truss")) then
        		Humanoid:MoveTo(target.Position)
         	HumanoidRootPart:PivotTo(target.CFrame)
         	print("Teleported to:", target.Name)
     	else
         	warn("Could not find part:", partName)
     	end
-		totalTime = totalTime + 0.05
-        task.wait(0.05)
+    	end
+		totalTime = totalTime + 0.08
+        task.wait(0.08)
 	end
 	print(totalTime)
 	local bwp = Instance.new("Part",workspace)
 	bwp.Anchored = true
 	bwp.Size = Vector3.new(7,1,7)
 	bwp.Position = workspace.Towers[ac].WinPad.Position + Vector3.new(0,15,0)
-	Humanoid:MoveTo(bwp.Position)
-	HumanoidRootPart:PivotTo(bwp.CFrame)
+	for i = 1, 15 do
+		Humanoid:MoveTo(bwp.Position)
+		HumanoidRootPart:PivotTo(bwp.CFrame+Vector3.new(0,5,0))
+		task.wait(0.1)
+	end
 	task.wait(minTime-totalTime)
-	Humanoid:MoveTo(workspace.Towers[ac].WinPad.Position)
-	HumanoidRootPart:PivotTo(workspace.Towers[ac].WinPad.CFrame)
+	for i = 1, 15 do
+		Humanoid:MoveTo(workspace.Towers[ac].WinPad.Position)
+		HumanoidRootPart:PivotTo(workspace.Towers[ac].WinPad.CFrame)
+		task.wait(0.1)
+	end
 end
 local touchedOnce = {}
 local read = gui:CreateTab("README",1)
@@ -245,7 +284,34 @@ gui:CreateButton(dev, "trigger", "Save macro", "",2,function()SetBoxText() end)
 local sorted = {}
 gui:CreateButton(dev, "trigger", "Name parts", "",3,function()
 for _, v in ipairs(workspace.Towers[plr.PlayerGui.Timer.Timer.Acronym.Text]:GetDescendants()) do
-	if v:IsA("Part") and not v:FindFirstChild("Kills") and v.Name ~= "WinPad" then
+	if (v:IsA("Part") or v:IsA("Truss"))  and not v:FindFirstChild("kills") and v.Name ~= "WinPad" then
+		local inserted = false
+		if not sorted[1] then
+			table.insert(sorted, v)
+		else
+			for ii, vv in ipairs(sorted) do
+				if v.Position.Y < vv.Position.Y then
+					table.insert(sorted, ii, v)
+					inserted = true
+					break
+				end
+			end
+			if not inserted then
+				table.insert(sorted, v)
+			end
+		end
+		v.Touched:Connect(function(hit)
+			if hit.Parent ~= plr.Character and hit.Parent.Parent ~= plr.Character then return end
+			if not recording then return end
+			if touchedOnce[v] then return end
+			touchedOnce[v] = true
+			table.insert(macro, v.Name)
+			print(v.Name)
+		end)
+	end
+end
+for _, v in ipairs(workspace.ClientParts:GetDescendants()) do
+	if (v:IsA("Part") or v:IsA("Truss"))  and not v:FindFirstChild("kills") and v.Name ~= "WinPad" then
 		local inserted = false
 		if not sorted[1] then
 			table.insert(sorted, v)
@@ -274,11 +340,13 @@ end
 for i,v in pairs(sorted) do
 	v.Name = tostring(i)
 end
-
+print(#sorted)
 end)
 gui:CreateButton(dev, "trigger", "Clear macro", "",4,function()macro = {}end)
 gui:CreateButton(r1,"trigger","Tower of True Skill","",15,function()MacroTower("ToTS",17)end)
-gui:CreateButton(r2,"trigger","Tower of Difficulty Chart","",15,function()MacroTower("ToDC",210)end)
+gui:CreateButton(r1,"trigger","Tower of Madness","",15,function()MacroTower("ToM",3)end)
+gui:CreateButton(r2,"trigger","Tower of Difficulty Chart","",15,function()MacroTower("ToDC",180)end)
+gui:CreateButton(r2,"trigger","Tower of Eternal Suffering","",13,function()MacroTower("ToES",180)end)
 
 gui:SetTitle("EToH Macros")
 local touchedOnce = {}
