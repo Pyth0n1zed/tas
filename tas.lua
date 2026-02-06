@@ -185,6 +185,7 @@ function MacroTower(ac,minTime)
 	print(table.unpack(macro))
 	local totalTime = 0
 	for _, v in ipairs(workspace.Towers[plr.PlayerGui.Timer.Timer.Acronym.Text]:GetDescendants()) do
+		if v.Name == "ButtonActivatedPlatform" then v.Transparency = 0 end
 		if v:IsA("Part") and not v:FindFirstChild("Kills") and v.Name ~= "WinPad" then
 			local inserted = false
 			if not sorted[1] then
@@ -204,6 +205,7 @@ function MacroTower(ac,minTime)
 		end
 	end
 	for _, v in ipairs(workspace.ClientParts:GetDescendants()) do
+		if v.Name == "ButtonActivatedPlatform" then v.Transparency = 0 end
 		if v:IsA("Part") and not v:FindFirstChild("kills") and v.Name ~= "WinPad" then
 			local inserted = false
 			if not sorted[1] then
@@ -278,6 +280,7 @@ local main = gui:CreateTab("Ring 0",2)
 local dev = gui:CreateTab("Dev", 100)
 local r1 = gui:CreateTab("Ring 1", 3)
 local r2 = gui:CreateTab("Ring 2", 5)
+local r3 = gui:CreateTab("Ring 3", 6)
 local z1 = gui:CreateTab("Zone 1", 4)
 gui:CreateButton(dev, "trigger", "Toggle Macro Rec", "",1,function()recording = not recording end)
 gui:CreateButton(dev, "trigger", "Save macro", "",2,function()SetBoxText() end)
@@ -285,6 +288,7 @@ local sorted = {}
 gui:CreateButton(dev, "trigger", "Name parts", "",3,function()
 for _, v in ipairs(workspace.Towers[plr.PlayerGui.Timer.Timer.Acronym.Text]:GetDescendants()) do
 	if (v:IsA("Part") or v:IsA("Truss"))  and not v:FindFirstChild("kills") and v.Name ~= "WinPad" then
+		if v.Name == "ButtonActivatedPlatform" then v.Transparency = 0 end
 		local inserted = false
 		if not sorted[1] then
 			table.insert(sorted, v)
@@ -312,6 +316,8 @@ for _, v in ipairs(workspace.Towers[plr.PlayerGui.Timer.Timer.Acronym.Text]:GetD
 end
 for _, v in ipairs(workspace.ClientParts:GetDescendants()) do
 	if (v:IsA("Part") or v:IsA("Truss"))  and not v:FindFirstChild("kills") and v.Name ~= "WinPad" then
+		if v.Parent.Name == "Sequence" then v.Transparency = 0 end
+		if v.Name == "ButtonActivatedPlatform" then v.Transparency = 0 end
 		local inserted = false
 		if not sorted[1] then
 			table.insert(sorted, v)
@@ -343,10 +349,14 @@ end
 print(#sorted)
 end)
 gui:CreateButton(dev, "trigger", "Clear macro", "",4,function()macro = {}end)
+
+gui:CreateButton(main,"trigger","Tower of Genesis","",1,function()MacroTower("ToG",210)end)
 gui:CreateButton(r1,"trigger","Tower of True Skill","",15,function()MacroTower("ToTS",17)end)
-gui:CreateButton(r1,"trigger","Tower of Madness","",15,function()MacroTower("ToM",3)end)
+gui:CreateButton(r1,"trigger","Tower of Madness","",3,function()MacroTower("ToM",180)end)
+gui:CreateButton(r1,"trigger","Tower of Anger","",2,function()MacroTower("ToA",150)end)
 gui:CreateButton(r2,"trigger","Tower of Difficulty Chart","",15,function()MacroTower("ToDC",180)end)
 gui:CreateButton(r2,"trigger","Tower of Eternal Suffering","",13,function()MacroTower("ToES",180)end)
+gui:CreateButton(r3,"trigger","Tower of Confusion","",13,function()MacroTower("ToC",240)end)
 
 gui:SetTitle("EToH Macros")
 local touchedOnce = {}
