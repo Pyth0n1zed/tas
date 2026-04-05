@@ -125,48 +125,7 @@ game.UserInputService.InputEnded:Connect(function(key)
 		zHold = false
 	end
 end)
---[[
-game.UserInputService.InputBegan:Connect(function(key)
-	if key.KeyCode == Enum.KeyCode.V then
-		macro = {}
-		SetPlaying(false)
-		SetRecording(false)
-	elseif key.KeyCode == Enum.KeyCode.B then
-		SetRecording(true)
-		recording = false
-		workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
-		AllowPlay = false
-		if macro[#macro] then  
-			HumanoidRootPart:PivotTo(macro[#macro][1])
-			workspace.CurrentCamera.CFrame = macro[#macro][2]
-			playIndex = #macro
-		end
-	elseif key.KeyCode == Enum.KeyCode.C then
-		recording = not AllowPlay
-		AllowPlay = not AllowPlay
-	elseif key.KeyCode == Enum.KeyCode.N then
-		SetRecording(false)
-		SetBoxText()
-	elseif key.KeyCode == Enum.KeyCode.M then
-		SetPlaying(true)
-	elseif key.KeyCode == Enum.KeyCode.L then
-		SetPlaying(false)
-	elseif key.KeyCode == Enum.KeyCode.Z then
-		zHold = true
-	elseif key.KeyCode == Enum.KeyCode.X then
-		recording = false
-		AllowPlay = false
-		--playIndex = playIndex + 1
 
-		recording = true
-		AllowPlay = true
-		task.wait()
-		recording = false
-		AllowPlay = false
-	elseif key.KeyCode == Enum.KeyCode.K then
-		SetBoxText()
-	end
-end)]]
 local sorted = {}
 function MacroTower(ac,minTime)
 	gui:Notify("TASing "..ac.."... Please wait",5)
@@ -258,12 +217,15 @@ function MacroTower(ac,minTime)
 	bwp.Anchored = true
 	bwp.Size = Vector3.new(7,1,7)
 	bwp.Position = workspace.Towers[ac].WinPad.Position + Vector3.new(0,15,0)
-	for i = 1, 15 do
+	
+	local timePAssed = false
+	task.spawn(function()task.wait(minTime-totalTime) timePAssed=true end)
+	while true do
 		Humanoid:MoveTo(bwp.Position)
 		HumanoidRootPart:PivotTo(bwp.CFrame+Vector3.new(0,5,0))
-		task.wait(0.1)
+		task.wait()
+		if timePAssed then break end
 	end
-	task.wait(minTime-totalTime)
 	for i = 1, 15 do
 		Humanoid:MoveTo(workspace.Towers[ac].WinPad.Position)
 		HumanoidRootPart:PivotTo(workspace.Towers[ac].WinPad.CFrame)
@@ -349,8 +311,10 @@ end
 print(#sorted)
 end)
 gui:CreateButton(dev, "trigger", "Clear macro", "",4,function()macro = {}end)
+gui:CreateButton(dev,"trigger","load inf yield","",5,function() loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))() end)
 
 gui:CreateButton(main,"trigger","Tower of Genesis","",1,function()MacroTower("ToG",210)end)
+gui:CreateButton(main,"trigger","Tower of Motion Evolution","",2,function()MacroTower("ToME",210)end)
 gui:CreateButton(r1,"trigger","Tower of True Skill","",15,function()MacroTower("ToTS",17)end)
 gui:CreateButton(r1,"trigger","Tower of Madness","",3,function()MacroTower("ToM",180)end)
 gui:CreateButton(r1,"trigger","Tower of Anger","",2,function()MacroTower("ToA",150)end)
