@@ -316,6 +316,7 @@ gui:CreateButton(dev,"trigger","load inf yield","",5,function() loadstring(game:
 
 gui:CreateButton(main,"trigger","Tower of Genesis","",1,function()MacroTower("ToG",210)end)
 gui:CreateButton(main,"trigger","Tower of Motion Evolution","",2,function()MacroTower("ToME",210)end)
+gui:CreateButton(main,"trigger","Tower of Buttons","",3,function()MacroTower("ToB",210)end)
 gui:CreateButton(r1,"trigger","Tower of True Skill","",15,function()MacroTower("ToTS",17)end)
 gui:CreateButton(r1,"trigger","Tower of Madness","",3,function()MacroTower("ToM",180)end)
 gui:CreateButton(r1,"trigger","Tower of Anger","",2,function()MacroTower("ToA",150)end)
